@@ -3,6 +3,8 @@
 	--text-color: #000000;
 	--manifold-color: #e1e1e1;
 	--std-font: "Open Sans";
+	--tooptip-background: rgba(225, 225, 225, 0.50);
+	--popup-background: rgba(225, 225, 225, 0.75);
 }
 
 body {
@@ -22,4 +24,33 @@ body {
 	height: calc(100% - 24px);
 	width: 100vw;
 	z-index: 0;
+}
+
+.shipPopup .leaflet-popup-content-wrapper {
+	background: var(--popup-background);
+	color: var(--text-color);
+	font-size: 16px;
+	line-height: 24px;
+}
+
+.shipPopup .leaflet-popup-content-wrapper a {
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.shipPopup .leaflet-popup-tip {
+	background: var(--popup-background);
+}
+
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	display: none;
+}
+
+.leaflet-tooltip {
+	background-color: var(--tooptip-background);
+	border: 1px solid var(--tooptip-background);
+	border-radius: 10px;
+	box-shadow: none;
+	font-size: large;
+	font-weight: bold;
 }
