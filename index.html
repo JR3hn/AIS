@@ -158,7 +158,7 @@
             </table>
         `;
 
-        if (TRACKED_SHIPS.includes(shipName)|| shipName.toUpperCase().includes("RESCUE") || shipName.toUpperCase().includes("VASSARO") || !shipName.toUpperCase().includes("REF POINT")) {
+        if (TRACKED_SHIPS.includes(shipName)|| shipName.toUpperCase().includes("RESCUE") || shipName.toUpperCase().includes("VASSARO") && !shipName.toUpperCase().includes("REF POINT")) {
             console.log(message)
             if (shipMarkers[shipName]) {
                 shipMarkers[shipName]
