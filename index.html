@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.min.js"></script>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
     <script src="https://kit.fontawesome.com/c7032de331.js" crossorigin="anonymous"></script>
@@ -107,51 +108,99 @@
     };
 
 
+    const arrowIcon = L.icon({
+    iconUrl: 'img/Boat marker.svg',
+    iconSize: [42, 42],
+    iconAnchor: [21, 21], // mitten av ikonen
+    });
+
     // CREATE MARKERS, filtered by this array
-    const TRACKED_SHIPS = ["VERONICA", "SVANHILD", "VIGGEN", "GRISSLAN VASSARO"];
+    const TRACKED_SHIPS = ["VERONICA", "SVANHILD", "VIGGEN", "GRISSLAN VASSARO", "RESCUE OLLE BOHLIN", "MASEN VASSARO"];
+
+    const shipMarkers = {};
 
     function createMarker(message) {
         if (!message.coordinates || !message.name) return;
-        if (TRACKED_SHIPS.includes(message.name.trim())) {
+        const shipName = message.name.trim();
+        if (TRACKED_SHIPS.includes(shipName)) {
             console.log(message)
-            marker = L.marker(message.coordinates);
-            marker.bindPopup(`
-                <h1></h1>
-                <table class="table is-light is-striped">
-                    <thead>
-                        <tr>
-                            <th><i class="fa-solid fa-ship"></i></th>
-                            <th>${message.name || "<i>Inget namn...</i>"}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Fart:</td>
-                            <td>${message.speed || "0"} knop</td>
-                        </tr>
-                        <tr>
-                            <td>Kurs:</td>
-                            <td>${message.course + "&deg;" || "-"}</td>
-                        </tr>
-                        <tr>
-                            <td>Status:</td>
-                            <td>${message.navigationalStatus || "-"}</td>
-                        </tr>
-                        <tr>
-                            <td>Legend:</td>
-                            <td>${message.legend || "-"}</td>
-                        </tr>
-                        <tr>
-                            <td>Koordinater:</td>
-                            <td>N${parseFloat(message.coordinates[0]).toFixed(5)}, E${parseFloat(message.coordinates[1]).toFixed(5)}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            `);
-            marker.addTo(lfmap);
+            if (shipMarkers[shipName]) {
+                shipMarkers[shipName]
+                    .setLatLng(message.coordinates)
+                    .setRotationAngle(message.course || 0)
+                    .setPopupContent(`
+                        <h1></h1>
+                        <table class="table is-light is-striped">
+                            <thead>
+                                <tr>
+                                    <th><i class="fa-solid fa-ship"></i></th>
+                                    <th>${message.name || "<i>Inget namn...</i>"}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Fart:</td>
+                                    <td>${message.speed || "0"} knop</td>
+                                </tr>
+                                <tr>
+                                    <td>Kurs:</td>
+                                    <td>${message.course + "&deg;" || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <td>Status:</td>
+                                    <td>${message.navigationalStatus || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <td>Legend:</td>
+                                    <td>${message.legend || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <td>Koordinater:</td>
+                                    <td>N${parseFloat(message.coordinates[0]).toFixed(5)}, E${parseFloat(message.coordinates[1]).toFixed(5)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    `);
+            } else {
+                const marker = L.marker(message.coordinates, {rotationAngle: message.course || 0, icon: arrowIcon});
+                marker.bindPopup(`
+                    <h1></h1>
+                    <table class="table is-light is-striped">
+                        <thead>
+                            <tr>
+                                <th><i class="fa-solid fa-ship"></i></th>
+                                <th>${message.name || "<i>Inget namn...</i>"}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Fart:</td>
+                                <td>${message.speed || "0"} knop</td>
+                            </tr>
+                            <tr>
+                                <td>Kurs:</td>
+                                <td>${message.course + "&deg;" || "-"}</td>
+                            </tr>
+                            <tr>
+                                <td>Status:</td>
+                                <td>${message.navigationalStatus || "-"}</td>
+                            </tr>
+                            <tr>
+                                <td>Legend:</td>
+                                <td>${message.legend || "-"}</td>
+                            </tr>
+                            <tr>
+                                <td>Koordinater:</td>
+                                <td>N${parseFloat(message.coordinates[0]).toFixed(5)}, E${parseFloat(message.coordinates[1]).toFixed(5)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `);
+                marker.addTo(lfmap);
+                shipMarkers[shipName] = marker;
+            }
         }
-    };
-    
+};
 </script>
 
 </html>
