@@ -4,7 +4,9 @@
 	--manifold-color: #e1e1e1;
 	--std-font: "Open Sans";
 	--tooptip-background: rgba(225, 225, 225, 0.50);
-	--popup-background: rgba(225, 225, 225, 0.75);
+	--popup-background: rgba(225, 225, 225, 0.9);
+	--ship-color: #d70077;
+	--harbor-color: var(--accent-color);
 }
 
 body {
@@ -53,4 +55,9 @@ body {
 	box-shadow: none;
 	font-size: large;
 	font-weight: bold;
+}
+
+.locationIcon {
+  text-align: center;
+  line-height: 20px;
 }
