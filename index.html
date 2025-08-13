@@ -115,7 +115,7 @@
     });
 
     // CREATE MARKERS, filtered by this array
-    const TRACKED_SHIPS = ["VERONICA", "SVANHILD", "VIGGEN", "GRISSLAN VASSARO", "RESCUE OLLE BOHLIN", "MASEN VASSARO", "SEVEN CS", "RESCUE SUNNANO", "BULLRET VASSARO",  "TARNAN VASSARO", "ORNEN VASSARO"];
+    const TRACKED_SHIPS = ["VERONICA", "SVANHILD", "VIGGEN"];
 
     var shipMarkers = {};
 
@@ -158,7 +158,7 @@
             </table>
         `;
 
-        if (TRACKED_SHIPS.includes(shipName)) {
+        if (TRACKED_SHIPS.includes(shipName)|| shipName.toUpperCase().includes("RESCUE") || shipName.toUpperCase().includes("VASSARO")) {
             console.log(message)
             if (shipMarkers[shipName]) {
                 shipMarkers[shipName]
@@ -184,6 +184,8 @@
                 marker.addTo(lfmap);
                 shipMarkers[shipName] = marker;
             }
+
+            // CREATE PREDICTING VECTOR
             if (shipVectors[shipName]) {
                 lfmap.removeLayer(shipVectors[shipName]);
             }
