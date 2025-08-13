@@ -118,9 +118,9 @@
     // CREATE MARKERS, filtered by this array
     const TRACKED_SHIPS = ["VERONICA", "SVANHILD", "VIGGEN", "GRISSLAN VASSARO", "RESCUE OLLE BOHLIN", "MASEN VASSARO", "SEVEN CS", "RESCUE SUNNANO", "BULLRET VASSARO"];
 
-    const shipMarkers = {};
+    var shipMarkers = {};
 
-    const shipVectors = {};
+    var shipVectors = {};
 
     function createMarker(message) {
         if (!message.coordinates || !message.name) return;
@@ -250,6 +250,7 @@
             }
         }
     };
+
 </script>
 
 </html>
