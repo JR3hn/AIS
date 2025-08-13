@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-geometryutil@0.10.1/src/leaflet.geometryutil.js"></script>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
     <script src="https://kit.fontawesome.com/c7032de331.js" crossorigin="anonymous"></script>
@@ -117,7 +118,12 @@
         iconAnchor: [21, 21], // mitten av ikonen
     });
 
+    // CREATE MARKERS, filtered by this array
+    const TRACKED_SHIPS = ["VERONICA", "SVANHILD", "VIGGEN", "GRISSLAN VASSARO", "RESCUE OLLE BOHLIN", "MASEN VASSARO", "SEVEN CS", "RESCUE SUNNANO", "BULLRET VASSARO"];
+
     var shipMarkers = {};
+
+    var shipVectors = {};
 
     function createMarker(message) {
         if (!message.coordinates || !message.name) return;
@@ -181,6 +187,52 @@
 
                 marker.addTo(lfmap);
                 shipMarkers[shipName] = marker;
+            }
+            if (shipVectors[shipName]) {
+                lfmap.removeLayer(shipVectors[shipName]);
+            }
+            if (typeof message.course === "number" && typeof message.speed === "number" && message.speed > 0.5) {
+                const distance = message.speed * 100;
+    
+                // Skapa LatLng-objekt
+                const startPoint = L.latLng(message.coordinates[0], message.coordinates[1]);
+                const bearing = message.course;
+
+                // Beräkna endpoint (distans i meter)
+                const endPoint = L.GeometryUtil.destination(startPoint, bearing, distance);
+
+                const start = [startPoint.lat, startPoint.lng];
+                const end = [endPoint.lat, endPoint.lng];
+
+                const vectorGroup = L.layerGroup();
+
+                // Svart outline (bredare)
+                const outline = L.polyline([start, end], {
+                    color: 'black',
+                    weight: 7,
+                    opacity: 1
+                });
+                vectorGroup.addLayer(outline);
+            
+                // Röd linje (ovanpå)
+                const polyline = L.polyline([start, end], {
+                    color: '#D70077',
+                    weight: 3,
+                    opacity: 1
+                });
+                vectorGroup.addLayer(polyline);
+            
+                const circle = L.circleMarker(end, {
+                    radius: 5,
+                    color: 'black',   
+                    weight: 2,
+                    fillColor: '#D70077',
+                    fillOpacity: 1
+                });
+                vectorGroup.addLayer(circle);
+            
+                vectorGroup.addTo(lfmap);
+                shipVectors[shipName] = vectorGroup;
             }
         }
     };
