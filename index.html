@@ -114,12 +114,48 @@
         iconAnchor: [21, 21], // mitten av ikonen
     });
 
+    const locationIcon = L.divIcon({
+        html: '<i style="color: var(--harbor-color)" class="fa-solid fa-location-crosshairs fa-2x"></i>',
+        iconSize: [42, 42],
+        iconAnchor: [21, 21], // mitten av ikonen
+        className: "locationIcon"
+    });
+
+    const HARBORS = [
+        ["Djuphamn", [60.259901, 18.691059]],
+        ["Fladan", [60.261266, 18.698441]],
+        ["Strömsviken", [60.216261, 18.725735]],
+        ["Öregrund", [60.340856, 18.442161]],
+        ["Äspskär", [60.30136, 18.59455]],
+        ["Sundsveden", [60.251664, 18.60996]]
+    ]
+
+    HARBORS.forEach(harbor => {
+        const harbourMarker = L.marker(harbor[1], {
+            icon: locationIcon,
+            title: harbor[0]
+        })
+            .bindPopup(harbor[0], {
+                offset: [0, -10],
+                className: "shipPopup",
+            })
+            .addTo(lfmap);
+    });
+
     // CREATE MARKERS, filtered by this array
     const TRACKED_SHIPS = ["VERONICA", "SVANHILD", "VIGGEN", "GRISSLAN VASSARO", "RESCUE OLLE BOHLIN", "MASEN VASSARO", "SEVEN CS", "RESCUE SUNNANO", "BULLRET VASSARO",  "TARNAN VASSARO", "ORNEN VASSARO"];
 
     var shipMarkers = {};
 
     var shipVectors = {};
+
+    function formatName(name) {
+        var splitString = name.toLowerCase().split(" ");
+        for (var i = 0; i < splitString.length; i++) {
+            splitString[i] = splitString[i].charAt(0).toUpperCase() + splitString[i].substring(1);
+        }
+        return splitString.join(" ");
+    }
 
     function createMarker(message) {
         if (!message.coordinates || !message.name) return;
@@ -130,7 +166,7 @@
                 <thead>
                     <tr>
                         <td style="font-weight: bold;"><i class="fa-solid fa-ship"></i></td>
-                        <td style="font-weight: bold;">${shipName || "<i>Inget namn...</i>"}</td>
+                        <td style="font-weight: bold;">${formatName(shipName) || "<i>Inget namn...</i>"}</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -173,10 +209,9 @@
                 marker.bindPopup(infoHTML, {
                     offset: [0, -10],
                     className: "shipPopup",
-                    closeButton: false
                 });
 
-                marker.bindTooltip(`${message.name || "<i>Inget namn...</i>"}`, {
+                marker.bindTooltip(`${formatName(shipName) || "<i>Inget namn...</i>"}`, {
                     offset: [20, 0],
                     permanent: true
                 }).openTooltip();
