@@ -12,7 +12,10 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet-geometryutil@0.10.1/src/leaflet.geometryutil.js"></script>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
-    <script src="https://kit.fontawesome.com/c7032de331.js" crossorigin="anonymous"></script>
+    <!-- <script src="https://kit.fontawesome.com/c7032de331.js" crossorigin="anonymous"></script> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+        integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 </head>
@@ -21,9 +24,8 @@
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="./">
-                <i class="fa-solid fa-anchor"></i>
-                <!-- <img src="/img/vassarologo.png"> -->
-                &nbsp;Vässarö AIS</a>
+                <i class="fa-solid fa-anchor"></i>&nbsp;Vässarö AIS
+            </a>
         </div>
         <div class="navbar-menu" id="navMenu">
             <div class="navbar-start">
@@ -54,7 +56,7 @@
             attribution: '&copy; <a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">Esri, Maxar, Earthstar Geographics, and the GIS User Community</a>.'
         })
     };
-    
+
     // Kartan börjar centrerad runt Strömsviken - Djuphamn
     var lfmap = L.map('map', {
         center: [60.24521, 18.68388],
@@ -84,14 +86,14 @@
 
     ws.onmessage = (event) => {
         if (event.data.startsWith('42["vesselPositions-init"')) {
-        const vessels = JSON.parse(event.data.toString().slice(2))[1];
-        vessels.forEach(message => {
-            const shipName = message.name && message.name.trim();
-            if (!shipName) return;
-            if (!shipLastUpdate[shipName]) {
-                createMarker(message);
-            }
-        });
+            const vessels = JSON.parse(event.data.toString().slice(2))[1];
+            vessels.forEach(message => {
+                const shipName = message.name && message.name.trim();
+                if (!shipName) return;
+                if (!shipLastUpdate[shipName]) {
+                    createMarker(message);
+                }
+            });
         } else {
             const message = JSON.parse(event.data.toString().slice(2))[1];
             const shipName = message.name && message.name.trim();
@@ -133,6 +135,7 @@
     ]
 
     HARBORS.forEach(harbor => {
+        console.log(harbor)
         const harbourMarker = L.marker(harbor[1], {
             icon: locationIcon,
             title: harbor[0]
@@ -196,7 +199,11 @@
             </table>
         `;
 
-        if (TRACKED_SHIPS.includes(shipName)|| shipName.toUpperCase().includes("RESCUE") || shipName.toUpperCase().includes("VASSARO") && !shipName.toUpperCase().includes("REF POINT")) {
+        if (
+            TRACKED_SHIPS.includes(shipName) ||
+            shipName.toUpperCase().includes("RESCUE") ||
+            (shipName.toUpperCase().includes("VASSARO") && !shipName.toUpperCase().includes("REF POINT"))
+        ) {
             console.log(message)
             if (shipMarkers[shipName]) {
                 shipMarkers[shipName]
@@ -228,7 +235,7 @@
             }
             if (typeof message.course === "number" && typeof message.speed === "number" && message.speed > 0.5) {
                 const distance = message.speed * 100;
-    
+
                 // Skapa LatLng-objekt
                 const startPoint = L.latLng(message.coordinates[0], message.coordinates[1]);
                 const bearing = message.course;
@@ -248,7 +255,7 @@
                     opacity: 1
                 });
                 vectorGroup.addLayer(outline);
-            
+
                 // Röd linje (ovanpå)
                 const polyline = L.polyline([start, end], {
                     color: '#D70077',
@@ -256,16 +263,16 @@
                     opacity: 1
                 });
                 vectorGroup.addLayer(polyline);
-            
+
                 const circle = L.circleMarker(end, {
                     radius: 5,
-                    color: 'black',   
+                    color: 'black',
                     weight: 2,
                     fillColor: '#D70077',
                     fillOpacity: 1
                 });
                 vectorGroup.addLayer(circle);
-            
+
                 vectorGroup.addTo(lfmap);
                 shipVectors[shipName] = vectorGroup;
             }
