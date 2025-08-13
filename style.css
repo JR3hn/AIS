@@ -3,7 +3,7 @@
 	--text-color: #000000;
 	--manifold-color: #e1e1e1;
 	--std-font: "Open Sans";
-	--tooptip-background: rgba(225, 225, 225, 0.50);
+	--tooptip-background: rgba(225, 225, 225, 0.5);
 	--popup-background: rgba(225, 225, 225, 0.9);
 	--ship-color: #d70077;
 	--harbor-color: var(--accent-color);
@@ -52,6 +52,10 @@ body {
 	background-color: var(--tooptip-background);
 	border: 1px solid var(--tooptip-background);
 	border-radius: 10px;
+	padding: 0px;
+	margin: 0px;
+	padding-left: 5px;
+	padding-right: 5px;
 	box-shadow: none;
 	font-size: large;
 	font-weight: bold;
