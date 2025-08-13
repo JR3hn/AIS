@@ -95,7 +95,6 @@
     const ws = new WebSocket("wss://jumpgate.vassaro.net/ws/");
 
     ws.onmessage = (event) => {
-        console.log("WebSocket message received:", event.data);
         const message = JSON.parse(event.data.toString().slice(2))[1];
         createMarker(message);
     };
@@ -109,8 +108,14 @@
     };
 
 
+    const arrowIcon = L.icon({
+    iconUrl: 'Boat marker.svg',
+    iconSize: [32, 32],
+    iconAnchor: [16, 16], // mitten av ikonen
+    });
+
     // CREATE MARKERS, filtered by this array
-    const TRACKED_SHIPS = ["VERONICA", "SVANHILD", "VIGGEN", "GRISSLAN VASSARO", "RESCUE OLLE BOHLIN"];
+    const TRACKED_SHIPS = ["VERONICA", "SVANHILD", "VIGGEN", "GRISSLAN VASSARO", "RESCUE OLLE BOHLIN", "MASEN VASSARO"];
 
     const shipMarkers = {};
 
@@ -157,7 +162,7 @@
                         </table>
                     `);
             } else {
-                const marker = L.marker(message.coordinates, {rotationAngle: message.course || 0});
+                const marker = L.marker(message.coordinates, {rotationAngle: message.course || 0, icon: arrowIcon});
                 marker.bindPopup(`
                     <h1></h1>
                     <table class="table is-light is-striped">
