@@ -80,9 +80,26 @@
     // WEB SOCKET
     const ws = new WebSocket("wss://jumpgate.vassaro.net/ws/");
 
+    var shipLastUpdate = {};
+
     ws.onmessage = (event) => {
-        const message = JSON.parse(event.data.toString().slice(2))[1];
-        createMarker(message);
+        if (event.data.startsWith('42["vesselPositions-init"')) {
+        const vessels = JSON.parse(event.data.toString().slice(2))[1];
+        vessels.forEach(message => {
+            const shipName = message.name && message.name.trim();
+            if (!shipName) return;
+            if (!shipLastUpdate[shipName]) {
+                createMarker(message);
+            }
+        });
+        } else {
+            const message = JSON.parse(event.data.toString().slice(2))[1];
+            const shipName = message.name && message.name.trim();
+            if (shipName) {
+                shipLastUpdate[shipName] = Date.now();
+            }
+            createMarker(message);
+        }
     };
 
     ws.onclose = (event) => {
