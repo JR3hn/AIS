@@ -28,13 +28,19 @@
             <a class="navbar-item" href="./">
                 <i class="fa-solid fa-anchor"></i>&nbsp;Vässarö AIS
             </a>
+            <div class="navbar-item">
+                <label class="custom-switch">
+                    <input type="checkbox" id="showAllShipsSwitch">
+                    <span class="custom-slider"></span>
+                </label>
+                <span style="margin-left: 0.75em;">Visa alla fartyg</span>
+            </div>
         </div>
-        <div class="navbar-menu" id="navMenu">
+        <div class="navbar-menu is-active" id="navMenu">
             <div class="navbar-start">
                 <!-- <a class="navbar-item" href="/"><i class="fa-solid fa-info"></i>Info</a> -->
                 <!-- <a class="navbar-item" href="/"><i class="fa-solid fa-ship"></i>Ships</a> -->
             </div>
-            <div class="navbar-end"></div>
         </div>
     </nav>
 
@@ -81,6 +87,17 @@
         maxWidth: 300,
         nauticalMilesUnit: "sjömil"
     }).addTo(lfmap);
+
+    let showAllShips = window.location.search.includes("allships=1");
+    document.getElementById("showAllShipsSwitch").checked = showAllShips;
+
+    document.getElementById("showAllShipsSwitch").addEventListener("change", function(e) {
+        if (e.target.checked) {
+            window.location.search = "?allships=1";
+        } else {
+            window.location.search = "";
+        }
+    });
 
     // WEB SOCKET
     const ws = new WebSocket("wss://jumpgate.vassaro.net/ws/");
@@ -203,6 +220,7 @@
         `;
 
         if (
+            showAllShips && !shipName.toUpperCase().includes("REF POINT")||
             TRACKED_SHIPS.includes(shipName) ||
             shipName.toUpperCase().includes("RESCUE") ||
             (shipName.toUpperCase().includes("VASSARO") && !shipName.toUpperCase().includes("REF POINT"))
@@ -237,7 +255,7 @@
                 lfmap.removeLayer(shipVectors[shipName]);
             }
             if (typeof message.course === "number" && typeof message.speed === "number" && message.speed > 0.5) {
-                const distance = message.speed * 100;
+                const distance = message.speed * 150;
 
                 // Skapa LatLng-objekt
                 const startPoint = L.latLng(message.coordinates[0], message.coordinates[1]);
@@ -254,7 +272,7 @@
                 // Svart outline (bredare)
                 const outline = L.polyline([start, end], {
                     color: 'black',
-                    weight: 7,
+                    weight: 5,
                     opacity: 1
                 });
                 vectorGroup.addLayer(outline);
@@ -262,7 +280,7 @@
                 // Röd linje (ovanpå)
                 const polyline = L.polyline([start, end], {
                     color: '#D70077',
-                    weight: 3,
+                    weight: 2,
                     opacity: 1
                 });
                 vectorGroup.addLayer(polyline);
