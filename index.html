@@ -88,7 +88,7 @@
         nauticalMilesUnit: "sjömil"
     }).addTo(lfmap);
 
-    let showAllShips = window.location.search.includes("allships=1");
+    let showAllShips = false;
     document.getElementById("showAllShipsSwitch").checked = showAllShips;
 
     document.getElementById("showAllShipsSwitch").addEventListener("change", function(e) {
