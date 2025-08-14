@@ -17,6 +17,8 @@
         integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    <script src="src/leaflet.nauticalscale.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 </head>
 
@@ -40,7 +42,8 @@
 
     <div class="content has-text-centered" style="margin: 0px;">
         <p>
-            Det här projektet är under Work In Progress. <a href="https://github.com/JR3hn/AIS"><i class="fa-brands fa-github"></i></a>
+            Det här projektet är under Work In Progress. <a href="https://github.com/JR3hn/AIS"><i
+                    class="fa-brands fa-github"></i></a>
         </p>
     </div>
 </body>
@@ -74,9 +77,9 @@
         lfmap.panInsideBounds(BOUNDS, { animate: true });
     });
 
-    const SCALE = L.control.scale({
-        position: "bottomright",
-        metric: true,
+    const SCALE = new L.control.scaleNautical({
+        maxWidth: 300,
+        nauticalMilesUnit: "sjömil"
     }).addTo(lfmap);
 
     // WEB SOCKET
