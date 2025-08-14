@@ -92,11 +92,14 @@
     document.getElementById("showAllShipsSwitch").checked = showAllShips;
 
     document.getElementById("showAllShipsSwitch").addEventListener("change", function(e) {
-        if (e.target.checked) {
-            window.location.search = "?allships=1";
-        } else {
-            window.location.search = "";
-        }
+        showAllShips = e.target.checked;
+        Object.values(shipMarkers).forEach(marker => lfmap.removeLayer(marker));
+        Object.values(shipVectors).forEach(vector => lfmap.removeLayer(vector));
+        shipMarkers = {};
+        shipVectors = {};
+        Object.values(latestVesselMessage).forEach(message => {
+            createMarker(message);
+        });
     });
 
     // WEB SOCKET
@@ -104,12 +107,15 @@
 
     var shipLastUpdate = {};
 
+    var latestVesselMessage = {};
+
     ws.onmessage = (event) => {
         if (event.data.startsWith('42["vesselPositions-init"')) {
-            const vessels = JSON.parse(event.data.toString().slice(2))[1];
-            vessels.forEach(message => {
+            lastInitVessels = JSON.parse(event.data.toString().slice(2))[1];
+            lastInitVessels.forEach(message => {
                 const shipName = message.name && message.name.trim();
                 if (!shipName) return;
+                latestVesselMessage[shipName] = message;
                 if (!shipLastUpdate[shipName]) {
                     createMarker(message);
                 }
@@ -119,6 +125,7 @@
             const shipName = message.name && message.name.trim();
             if (shipName) {
                 shipLastUpdate[shipName] = Date.now();
+                latestVesselMessage[shipName] = message;
             }
             createMarker(message);
         }
