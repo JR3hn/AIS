@@ -28,6 +28,13 @@
             <a class="navbar-item" href="./">
                 <i class="fa-solid fa-anchor"></i>&nbsp;Vässarö AIS
             </a>
+            <div class="navbar-item is-flex is-align-items-center">
+              <label class="custom-switch">
+                <input type="checkbox" id="showAllShipsSwitch">
+                <span class="custom-slider"></span>
+              </label>
+              <span style="margin-left: 0.75em;">Visa alla fartyg</span>
+            </div>
         </div>
         <div class="navbar-menu" id="navMenu">
             <div class="navbar-start">
@@ -82,6 +89,22 @@
         nauticalMilesUnit: "sjömil"
     }).addTo(lfmap);
 
+
+    let showAllShips = false;
+
+    document.getElementById('showAllShipsSwitch').addEventListener('change', function (event) {
+        showAllShips = event.target.checked;
+        // Ta bort alla nuvarande markörer och vektorer
+        Object.values(shipMarkers).forEach(marker => lfmap.removeLayer(marker));
+        Object.values(shipVectors).forEach(vector => lfmap.removeLayer(vector));
+        shipMarkers = {};
+        shipVectors = {};
+        // Lägg till markörer igen enligt nya filtret
+        Object.values(shipLastUpdate).forEach(message => {
+            createMarker(message);
+        });
+    });
+
     // WEB SOCKET
     const ws = new WebSocket("wss://jumpgate.vassaro.net/ws/");
 
@@ -95,13 +118,14 @@
                 if (!shipName) return;
                 if (!shipLastUpdate[shipName]) {
                     createMarker(message);
+                    shipLastUpdate[shipName] = message;
                 }
             });
         } else {
             const message = JSON.parse(event.data.toString().slice(2))[1];
             const shipName = message.name && message.name.trim();
             if (shipName) {
-                shipLastUpdate[shipName] = Date.now();
+                shipLastUpdate[shipName] = message;
             }
             createMarker(message);
         }
@@ -203,9 +227,13 @@
         `;
 
         if (
-            TRACKED_SHIPS.includes(shipName) ||
-            shipName.toUpperCase().includes("RESCUE") ||
-            (shipName.toUpperCase().includes("VASSARO") && !shipName.toUpperCase().includes("REF POINT"))
+            (
+                showAllShips ||
+                TRACKED_SHIPS.includes(shipName) ||
+                shipName.toUpperCase().includes("RESCUE") ||
+                (shipName.toUpperCase().includes("VASSARO") && !shipName.toUpperCase().includes("REF POINT"))
+            )
+            && !shipName.toUpperCase().includes("REF POINT")
         ) {
             console.log(message)
             if (shipMarkers[shipName]) {
