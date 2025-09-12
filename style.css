@@ -23,7 +23,7 @@ body {
 }
 
 #map {
-	height: calc(100% - 24px);
+	height: 100%;
 	width: 100vw;
 	z-index: 0;
 }
@@ -114,3 +114,9 @@ body {
 .custom-switch input:checked + .custom-slider:before {
   transform: translateX(20px);
 }
+
+/* @media screen {
+    .navbar-link.hidden-mobile {
+        display: none;
+    }
+} */

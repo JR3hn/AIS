@@ -3,7 +3,7 @@
 
 <head>
     <title>Vässarö AIS</title>
-    <link rel="icon" type="image/x-icon" href="img/vassaro_logga.jpg">
+    <link rel="icon" type="image/x-icon" href="img/vassaro_kvadrat.jpeg">
     <meta charset="utf-8" />
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -26,33 +26,70 @@
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="./">
-                <i class="fa-solid fa-anchor"></i>&nbsp;Vässarö AIS
+                <img src="img/vassaro_logga.jpg">&nbsp;Vässarö AIS
+                <!-- <i class="fa-solid fa-anchor"></i>&nbsp;Vässarö AIS -->
             </a>
-            <div class="navbar-item is-flex is-align-items-center">
-              <label class="custom-switch">
-                <input type="checkbox" id="showAllShipsSwitch">
-                <span class="custom-slider"></span>
-              </label>
-              <span style="margin-left: 0.75em;">Visa alla fartyg</span>
-            </div>
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+
+
         </div>
         <div class="navbar-menu" id="navMenu">
             <div class="navbar-start">
                 <!-- <a class="navbar-item" href="/"><i class="fa-solid fa-info"></i>Info</a> -->
                 <!-- <a class="navbar-item" href="/"><i class="fa-solid fa-ship"></i>Ships</a> -->
             </div>
-            <div class="navbar-end"></div>
+            <div class="navbar-end">
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link hidden-mobile">
+                        Fartyg
+                    </a>
+                    <div class="navbar-dropdown is-right ">
+                        <div class="navbar-item is-flex is-align-items-center">
+                            <label class="custom-switch">
+                                <input type="checkbox" id="showAllShipsSwitch">
+                                <span class="custom-slider"></span>
+                            </label>Visa alla fartyg</span>
+                        </div>
+                        <div class="navbar-item">
+                            <div class="table-container">
+                                <table class="table is-striped is-fullwidth">
+                                    <thead>
+                                        <tr>
+                                            <th>Namn</th>
+                                            <th>Fart</th>
+                                            <th colspan="2">Kurs</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="shipTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <hr class="navbar-divider">
+                        <div class="navbar-item">
+                            <div class="content">
+                                <p>
+                                    Det här projektet är under Work In Progress. <a
+                                        href="https://github.com/JR3hn/AIS"><i class="fa-brands fa-github"></i></a>
+                                </p>
+                                <p>
+                                    &copy; Vässarö, OpenStreetMap contributors.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
     <div id="map"></div>
 
-    <div class="content has-text-centered" style="margin: 0px;">
-        <p>
-            Det här projektet är under Work In Progress. <a href="https://github.com/JR3hn/AIS"><i
-                    class="fa-brands fa-github"></i></a>
-        </p>
-    </div>
 </body>
 
 <script>
@@ -129,6 +166,7 @@
             }
             createMarker(message);
         }
+        renderShipTable();
     };
 
     ws.onclose = (event) => {
@@ -309,6 +347,35 @@
             }
         }
     };
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // Get all "navbar-burger" elements
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+        // Add a click event on each of them
+        $navbarBurgers.forEach(el => {
+            el.addEventListener('click', () => {
+
+                // Get the target from the "data-target" attribute
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+
+                // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+
+            });
+        });
+
+    });
+
+    function renderShipTable() {
+        shipTableBody = document.getElementById("shipTableBody");
+        // shipMarkers.forEach(ship => {
+        //     shipTableBody.innerHTML += "hej"
+        // })
+    }
 
 </script>
 
