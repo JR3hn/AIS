@@ -11,12 +11,14 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-geometryutil@0.10.1/src/leaflet.geometryutil.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
-    <!-- <script src="https://kit.fontawesome.com/c7032de331.js" crossorigin="anonymous"></script> -->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
         integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <script src="src/leaflet.nauticalscale.js"></script>
+    <script src="src/leaflet.tooltipextension.js"></script>
+    
     <link rel="stylesheet" href="style.css" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -40,10 +42,6 @@
 
         </div>
         <div class="navbar-menu" id="navMenu">
-            <!-- <div class="navbar-start"> -->
-            <!-- <a class="navbar-item" href="/"><i class="fa-solid fa-info"></i>Info</a> -->
-            <!-- <a class="navbar-item" href="/"><i class="fa-solid fa-ship"></i>Ships</a> -->
-            <!-- </div> -->
             <div class="navbar-end">
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link hidden-mobile">
@@ -56,7 +54,7 @@
                                 <span class="custom-slider"></span>
                             </label>Visa alla fartyg</span>
                         </div>
-                        <div class="navbar-item" style="">
+                        <div class="navbar-item">
                             <div class="table-container" style="max-height: 500px; overflow: scroll;">
                                 <table class="table is-striped is-fullwidth">
                                     <thead>
@@ -77,7 +75,7 @@
                                     &copy; Vässarö, <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>
                                     contributors.
                                 </p>
-                                <p class="is-centered">
+                                <p>
                                     Den här hemsidan bor på Github:&nbsp;
                                     <a href="https://github.com/JR3hn/AIS">
                                         <i class="fa-brands fa-github"></i>
@@ -375,27 +373,25 @@
 
     function updateShipTable() {
         const shipTableBody = document.getElementById("shipTableBody");
-        shipTableBody.innerHTML = ""; // clear old rows
+        shipTableBody.innerHTML = "";
 
         Object.keys(shipMarkers)
-            .sort((a, b) => a.localeCompare(b))
+            .sort((a, b) => a.localeCompare(b, "sv-se"))
             .forEach(shipName => {
                 const message = shipLastUpdate[shipName];
                 if (!message) return;
 
                 const row = document.createElement("tr");
-
                 row.innerHTML = `
-            <td>${formatName(shipName)}</td>
-            <td>${renderSpeed(message)} knop</td>
-            <td>${renderCourse(message)}</td>
-            <td>
-                <button class="button is-small" onclick="focusShip('${shipName}')">
-                    <i class="fa-solid fa-crosshairs"></i>
-                </button>
-            </td>
-        `;
-
+                    <td>${formatName(shipName)}</td>
+                    <td>${renderSpeed(message)} knop</td>
+                    <td>${renderCourse(message)}</td>
+                    <td>
+                        <button class="button is-small" onclick="focusShip('${shipName}')">
+                            <i class="fa-solid fa-crosshairs"></i>
+                        </button>
+                    </td>
+                `;
                 shipTableBody.appendChild(row);
             });
     }
@@ -403,7 +399,7 @@
     function focusShip(shipName) {
         const marker = shipMarkers[shipName];
         if (marker) {
-            lfmap.setView(marker.getLatLng(), 17, { animate: true });
+            lfmap.setView(marker.getLatLng(), lfmap.getZoom(), { animate: true });
             burger = document.getElementsByClassName("navbar-burger")[0];
             burger.click();
         }
