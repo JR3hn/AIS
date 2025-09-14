@@ -41,8 +41,8 @@
         </div>
         <div class="navbar-menu" id="navMenu">
             <!-- <div class="navbar-start"> -->
-                <!-- <a class="navbar-item" href="/"><i class="fa-solid fa-info"></i>Info</a> -->
-                <!-- <a class="navbar-item" href="/"><i class="fa-solid fa-ship"></i>Ships</a> -->
+            <!-- <a class="navbar-item" href="/"><i class="fa-solid fa-info"></i>Info</a> -->
+            <!-- <a class="navbar-item" href="/"><i class="fa-solid fa-ship"></i>Ships</a> -->
             <!-- </div> -->
             <div class="navbar-end">
                 <div class="navbar-item has-dropdown is-hoverable">
@@ -74,11 +74,14 @@
                         <div class="navbar-item">
                             <div class="content">
                                 <p>
-                                    Det här projektet är under Work In Progress. <a
-                                        href="https://github.com/JR3hn/AIS"><i class="fa-brands fa-github"></i></a>
+                                    &copy; Vässarö, <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>
+                                    contributors.
                                 </p>
-                                <p>
-                                    &copy; Vässarö, OpenStreetMap contributors.
+                                <p class="is-centered">
+                                    Den här hemsidan bor på Github:&nbsp;
+                                    <a href="https://github.com/JR3hn/AIS">
+                                        <i class="fa-brands fa-github"></i>
+                                    </a>
                                 </p>
                             </div>
                         </div>
@@ -97,7 +100,7 @@
     // LEAFLET MAP
     const BASEMAPS = {
         OpenStreetMap: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</a>.'
+            // attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</a>.'
         }),
         Satellit: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: '&copy; <a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">Esri, Maxar, Earthstar Geographics, and the GIS User Community</a>.'
@@ -108,9 +111,10 @@
     var lfmap = L.map('map', {
         center: [60.24521, 18.68388],
         zoom: 13,
-        minZoom: 10,
+        // minZoom: 10,
         zoomControl: false,
         layers: [BASEMAPS.OpenStreetMap],
+        attributionControl: false
     });
 
     const SOUTH_WEST = L.latLng(60.0, 18.0);
