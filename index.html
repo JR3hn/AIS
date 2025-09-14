@@ -72,10 +72,6 @@
                         <div class="navbar-item">
                             <div class="content">
                                 <p>
-                                    &copy; Vässarö, <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>
-                                    contributors.
-                                </p>
-                                <p>
                                     Den här hemsidan bor på Github:&nbsp;
                                     <a href="https://github.com/JR3hn/AIS">
                                         <i class="fa-brands fa-github"></i>
@@ -98,7 +94,7 @@
     // LEAFLET MAP
     const BASEMAPS = {
         OpenStreetMap: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            // attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</a>.'
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</a>.'
         }),
         Satellit: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: '&copy; <a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">Esri, Maxar, Earthstar Geographics, and the GIS User Community</a>.'
@@ -111,8 +107,7 @@
         zoom: 13,
         // minZoom: 10,
         zoomControl: false,
-        layers: [BASEMAPS.OpenStreetMap],
-        attributionControl: false
+        layers: [BASEMAPS.OpenStreetMap]
     });
 
     const SOUTH_WEST = L.latLng(60.0, 18.0);
