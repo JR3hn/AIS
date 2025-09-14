@@ -49,15 +49,15 @@
                     <a class="navbar-link hidden-mobile">
                         <i class="fa-solid fa-ship"></i>&nbsp;Fartyg
                     </a>
-                    <div class="navbar-dropdown is-right ">
+                    <div class="navbar-dropdown is-right">
                         <div class="navbar-item is-flex is-align-items-center">
                             <label class="custom-switch">
                                 <input type="checkbox" id="showAllShipsSwitch">
                                 <span class="custom-slider"></span>
                             </label>Visa alla fartyg</span>
                         </div>
-                        <div class="navbar-item">
-                            <div class="table-container">
+                        <div class="navbar-item" style="">
+                            <div class="table-container" style="max-height: 500px; overflow: scroll;">
                                 <table class="table is-striped is-fullwidth">
                                     <thead>
                                         <tr>
@@ -212,7 +212,7 @@
     });
 
     // CREATE MARKERS, filtered by this array
-    const TRACKED_SHIPS = ["VERONICA", "SVANHILD", "VIGGEN", "MASEN"];
+    const TRACKED_SHIPS = ["VIGGEN", "MASEN"];
 
     var shipMarkers = {};
 
@@ -345,6 +345,7 @@
                 shipVectors[shipName] = vectorGroup;
             }
         }
+        updateShipTable();
     };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -366,17 +367,58 @@
 
             });
         });
-        renderShipTable();
     });
 
-    function renderShipTable() {
-        console.log("hej!")
+    function updateShipTable() {
         const shipTableBody = document.getElementById("shipTableBody");
-        console.log(shipMarkers)
-        Object.values(shipMarkers).forEach(marker => {
-            console.log(marker)
-            shipTableBody.innerHTML += "<tr><th>hej</th></tr>"
-        });
+        shipTableBody.innerHTML = ""; // clear old rows
+
+        Object.keys(shipMarkers)
+            .sort((a, b) => a.localeCompare(b))
+            .forEach(shipName => {
+                const message = shipLastUpdate[shipName];
+                if (!message) return;
+
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+            <td>${formatName(shipName)}</td>
+            <td>${renderSpeed(message)} knop</td>
+            <td>${renderCourse(message)}</td>
+            <td>
+                <button class="button is-small" onclick="focusShip('${shipName}')">
+                    <i class="fa-solid fa-crosshairs"></i>
+                </button>
+            </td>
+        `;
+
+                shipTableBody.appendChild(row);
+            });
+    }
+
+    function focusShip(shipName) {
+        const marker = shipMarkers[shipName];
+        if (marker) {
+            lfmap.setView(marker.getLatLng(), 17, { animate: true });
+            burger = document.getElementsByClassName("navbar-burger")[0];
+            burger.click();
+        }
+    }
+
+    function renderSpeed(message) {
+        if (message.speed) {
+            return message.speed.toFixed(1) > 0.2 ? message.speed.toFixed(1) : 0;
+        } else {
+            return "-";
+        }
+    }
+
+    function renderCourse(message) {
+        if (message.speed) {
+            return message.speed.toFixed(1) > 0.2 ? message.course + "&deg;" : "-";
+        } else {
+            return "-";
+        }
     }
 
 </script>
