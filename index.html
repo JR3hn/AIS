@@ -3,21 +3,22 @@
 
 <head>
     <title>Vässarö AIS</title>
-    <link rel="icon" type="image/x-icon" href="img/vassaro_logga.jpg">
+    <link rel="icon" type="image/x-icon" href="img/vassaro_kvadrat.jpeg">
     <meta charset="utf-8" />
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-geometryutil@0.10.1/src/leaflet.geometryutil.js"></script>
-    <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
-    <!-- <script src="https://kit.fontawesome.com/c7032de331.js" crossorigin="anonymous"></script> -->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
         integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <script src="src/leaflet.nauticalscale.js"></script>
+    
+    <link rel="stylesheet" href="style.css" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 </head>
@@ -26,33 +27,65 @@
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="./">
-                <i class="fa-solid fa-anchor"></i>&nbsp;Vässarö AIS
+                <img src="img/vassaro_logga.jpg">&nbsp;Vässarö AIS
+                <!-- <i class="fa-solid fa-anchor"></i>&nbsp;Vässarö AIS -->
             </a>
-            <div class="navbar-item is-flex is-align-items-center">
-              <label class="custom-switch">
-                <input type="checkbox" id="showAllShipsSwitch">
-                <span class="custom-slider"></span>
-              </label>
-              <span style="margin-left: 0.75em;">Visa alla fartyg</span>
-            </div>
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+
+
         </div>
         <div class="navbar-menu" id="navMenu">
-            <div class="navbar-start">
-                <!-- <a class="navbar-item" href="/"><i class="fa-solid fa-info"></i>Info</a> -->
-                <!-- <a class="navbar-item" href="/"><i class="fa-solid fa-ship"></i>Ships</a> -->
+            <div class="navbar-end">
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link hidden-mobile">
+                        <i class="fa-solid fa-ship"></i>&nbsp;Fartyg
+                    </a>
+                    <div class="navbar-dropdown is-right">
+                        <div class="navbar-item is-flex is-align-items-center">
+                            <label class="custom-switch">
+                                <input type="checkbox" id="showAllShipsSwitch">
+                                <span class="custom-slider"></span>
+                            </label>Visa alla fartyg</span>
+                        </div>
+                        <div class="navbar-item">
+                            <div class="table-container" style="max-height: 500px; overflow: scroll;">
+                                <table class="table is-striped is-fullwidth">
+                                    <thead>
+                                        <tr>
+                                            <th>Namn</th>
+                                            <th>Fart</th>
+                                            <th colspan="2">Kurs</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="shipTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <hr class="navbar-divider">
+                        <div class="navbar-item">
+                            <div class="content">
+                                <p>
+                                    Den här hemsidan bor på Github:&nbsp;
+                                    <a href="https://github.com/JR3hn/AIS">
+                                        <i class="fa-brands fa-github"></i>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="navbar-end"></div>
         </div>
     </nav>
 
     <div id="map"></div>
 
-    <div class="content has-text-centered" style="margin: 0px;">
-        <p>
-            Det här projektet är under Work In Progress. <a href="https://github.com/JR3hn/AIS"><i
-                    class="fa-brands fa-github"></i></a>
-        </p>
-    </div>
 </body>
 
 <script>
@@ -71,9 +104,9 @@
     var lfmap = L.map('map', {
         center: [60.24521, 18.68388],
         zoom: 13,
-        minZoom: 10,
+        // minZoom: 10,
         zoomControl: false,
-        layers: [BASEMAPS.OpenStreetMap],
+        layers: [BASEMAPS.OpenStreetMap]
     });
 
     const SOUTH_WEST = L.latLng(60.0, 18.0);
@@ -162,7 +195,7 @@
     ]
 
     HARBORS.forEach(harbor => {
-        console.log(harbor)
+        // console.log(harbor)
         const harbourMarker = L.marker(harbor[1], {
             icon: locationIcon,
             title: harbor[0]
@@ -175,7 +208,7 @@
     });
 
     // CREATE MARKERS, filtered by this array
-    const TRACKED_SHIPS = ["VERONICA", "SVANHILD", "VIGGEN", "MASEN"];
+    const TRACKED_SHIPS = ["VIGGEN", "MASEN"];
 
     var shipMarkers = {};
 
@@ -235,7 +268,7 @@
             )
             && !shipName.toUpperCase().includes("REF POINT")
         ) {
-            console.log(message)
+            // console.log(message)
             if (shipMarkers[shipName]) {
                 shipMarkers[shipName]
                     .setLatLng(message.coordinates)
@@ -308,7 +341,79 @@
                 shipVectors[shipName] = vectorGroup;
             }
         }
+        updateShipTable();
     };
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // Get all "navbar-burger" elements
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+        // Add a click event on each of them
+        $navbarBurgers.forEach(el => {
+            el.addEventListener('click', () => {
+
+                // Get the target from the "data-target" attribute
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+
+                // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+
+            });
+        });
+    });
+
+    function updateShipTable() {
+        const shipTableBody = document.getElementById("shipTableBody");
+        shipTableBody.innerHTML = "";
+
+        Object.keys(shipMarkers)
+            .sort((a, b) => a.localeCompare(b, "sv-se"))
+            .forEach(shipName => {
+                const message = shipLastUpdate[shipName];
+                if (!message) return;
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${formatName(shipName)}</td>
+                    <td>${renderSpeed(message)} knop</td>
+                    <td>${renderCourse(message)}</td>
+                    <td>
+                        <button class="button is-small" onclick="focusShip('${shipName}')">
+                            <i class="fa-solid fa-crosshairs"></i>
+                        </button>
+                    </td>
+                `;
+                shipTableBody.appendChild(row);
+            });
+    }
+
+    function focusShip(shipName) {
+        const marker = shipMarkers[shipName];
+        if (marker) {
+            lfmap.setView(marker.getLatLng(), lfmap.getZoom(), { animate: true });
+            burger = document.getElementsByClassName("navbar-burger")[0];
+            burger.click();
+        }
+    }
+
+    function renderSpeed(message) {
+        if (message.speed) {
+            return message.speed.toFixed(1) > 0.2 ? message.speed.toFixed(1) : 0;
+        } else {
+            return "-";
+        }
+    }
+
+    function renderCourse(message) {
+        if (message.speed) {
+            return message.speed.toFixed(1) > 0.2 ? message.course + "&deg;" : "-";
+        } else {
+            return "-";
+        }
+    }
 
 </script>
 
