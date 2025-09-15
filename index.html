@@ -11,13 +11,13 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-geometryutil@0.10.1/src/leaflet.geometryutil.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
         integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <script src="src/leaflet.nauticalscale.js"></script>
-    
+
     <link rel="stylesheet" href="style.css" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -60,7 +60,8 @@
                                         <tr>
                                             <th>Namn</th>
                                             <th>Fart</th>
-                                            <th colspan="2">Kurs</th>
+                                            <th>Kurs</th>
+                                            <th colspan="2">Senast sedd</th>
                                         </tr>
                                     </thead>
                                     <tbody id="shipTableBody"></tbody>
@@ -150,6 +151,7 @@
                 const shipName = message.name && message.name.trim();
                 if (!shipName) return;
                 if (!shipLastUpdate[shipName]) {
+                    message.lastSeen = new Date();
                     createMarker(message);
                     shipLastUpdate[shipName] = message;
                 }
@@ -158,6 +160,7 @@
             const message = JSON.parse(event.data.toString().slice(2))[1];
             const shipName = message.name && message.name.trim();
             if (shipName) {
+                message.lastSeen = new Date();
                 shipLastUpdate[shipName] = message;
             }
             createMarker(message);
@@ -169,8 +172,10 @@
     };
 
     ws.onerror = () => {
-        console.log("Connection closed due to error")
+        console.log("Connection closed due to error");
+        alert("Vi får ingen kontakt med Vässarö...");
     };
+
 
     const arrowIcon = L.icon({
         iconUrl: 'img/Boat marker.svg',
@@ -254,6 +259,10 @@
                     <tr>
                         <td>Koordinater:</td>
                         <td>N${parseFloat(message.coordinates[0]).toFixed(5)}, E${parseFloat(message.coordinates[1]).toFixed(5)}</td>
+                    </tr>
+                    <tr>
+                        <td>Senast sedd:</td>
+                        <td>${new Date(message.lastSeen).toLocaleString("sv-se") || "-"}</td>
                     </tr>
                 </tbody>
             </table>
@@ -380,6 +389,7 @@
                     <td>${formatName(shipName)}</td>
                     <td>${renderSpeed(message)} knop</td>
                     <td>${renderCourse(message)}</td>
+                    <td>${renderTime(message)}</td>
                     <td>
                         <button class="button is-small" onclick="focusShip('${shipName}')">
                             <i class="fa-solid fa-crosshairs"></i>
@@ -410,6 +420,32 @@
     function renderCourse(message) {
         if (message.speed) {
             return message.speed.toFixed(1) > 0.2 ? message.course + "&deg;" : "-";
+        } else {
+            return "-";
+        }
+    }
+
+    function renderTime(message) {
+        if (message.lastSeen) {
+            let diff = new Date() - new Date(message.lastSeen);
+
+            let ss = Math.floor(diff / 1000) % 60;
+            let mm = Math.floor(diff / 1000 / 60) % 60;
+            let hh = Math.floor(diff / 1000 / 60 / 60);
+
+            let text = "";
+            if (hh > 0) {
+                text += `${hh}h`
+            }
+            if (mm > 0) {
+                text += `${mm}m `
+            }
+            if (ss > 0) {
+                text += `${ss}s`
+            } else {
+                text += `0s`
+            }
+            return text;
         } else {
             return "-";
         }
