@@ -110,13 +110,13 @@
         layers: [BASEMAPS.OpenStreetMap]
     });
 
-    const SOUTH_WEST = L.latLng(60.0, 18.0);
-    const NORTH_EAST = L.latLng(60.4, 19.0);
-    const BOUNDS = L.latLngBounds(SOUTH_WEST, NORTH_EAST);
-    lfmap.setMaxBounds(BOUNDS);
-    lfmap.on('drag', function () {
-        lfmap.panInsideBounds(BOUNDS, { animate: true });
-    });
+    // const SOUTH_WEST = L.latLng(60.0, 18.0);
+    // const NORTH_EAST = L.latLng(60.4, 19.0);
+    // const BOUNDS = L.latLngBounds(SOUTH_WEST, NORTH_EAST);
+    // lfmap.setMaxBounds(BOUNDS);
+    // lfmap.on('drag', function () {
+    //     lfmap.panInsideBounds(BOUNDS, { animate: true });
+    // });
 
     const SCALE = new L.control.scaleNautical({
         maxWidth: 300,
@@ -229,6 +229,7 @@
 
     function createMarker(message) {
         if (!message.coordinates || !message.name) return;
+        if (!message.legend && !message.navigationalStatus) return;
         const shipName = message.name.trim();
 
         const infoHTML = `
