@@ -72,9 +72,9 @@
                         <div class="navbar-item">
                             <div class="content">
                                 <p>
-                                    Den här hemsidan bor på Github:&nbsp;
+                                    Den här hemsidan bor på
                                     <a href="https://github.com/JR3hn/AIS">
-                                        <i class="fa-brands fa-github"></i>
+                                        Github <i class="fa-brands fa-github"></i>
                                     </a>
                                 </p>
                             </div>
@@ -296,7 +296,8 @@
 
                 marker.bindTooltip(`${formatName(shipName) || "<i>Inget namn...</i>"}`, {
                     offset: [20, 0],
-                    permanent: true
+                    permanent: true,
+                    interactive: true
                 }).openTooltip();
 
                 marker.addTo(lfmap);
